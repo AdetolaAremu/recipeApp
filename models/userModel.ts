@@ -1,16 +1,22 @@
 import mongoose, { Document, Model } from "mongoose";
-import { IModelDocument } from "../model.interface";
+// import { IModelDocument } from "../model.interface";
 
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-interface IUserDocument extends Document {
-  password: string;
-  confirmPassword?: string;
+export interface IUserDocument extends Document {
+  password: String;
+  confirmPassword?: String;
   updatedAt?: Date;
+  firstName: String;
+  lastName: String;
+  middleName: String;
+  email: String;
+  username: String;
+  isEmailVerified: String;
 }
 
-const userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema<IUserDocument>(
   {
     firstName: {
       type: String,
@@ -25,13 +31,13 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: [true, "Email already exist"],
+      unique: true,
       required: [true, "Email is required"],
       validate: [validator.isEmail, "Please provide a valid email address"],
     },
     username: {
       type: String,
-      unique: [true, "Username already exist"],
+      unique: true,
       required: [true, "Username is required"],
     },
     isEmailVerified: {
@@ -74,7 +80,7 @@ userSchema.methods.correctPassword = async function (
   return bcrypt.compare(requestPassword, $dbPassword);
 };
 
-const User: Model<IModelDocument> = mongoose.model<IModelDocument>(
+const User: Model<IUserDocument> = mongoose.model<IUserDocument>(
   "User",
   userSchema
 );

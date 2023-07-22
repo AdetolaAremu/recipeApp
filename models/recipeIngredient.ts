@@ -1,5 +1,4 @@
-import mongoose, { Model } from "mongoose";
-import { IModelDocument } from "../model.interface";
+import mongoose from "mongoose";
 
 const recipeIngredientSchema = new mongoose.Schema(
   {
@@ -11,7 +10,6 @@ const recipeIngredientSchema = new mongoose.Schema(
     },
     amount: {
       type: Number,
-      // required: [true, 'Amount is required'],
       default: 0,
     },
     unit: {
@@ -19,16 +17,18 @@ const recipeIngredientSchema = new mongoose.Schema(
       required: [true, "Unit is required"],
       min: [1, "Unit has to be at least one"],
     },
-    createdAt: {
-      type: Date,
+    quantity: {
+      type: Number,
+      required: [true, "Quantity is required"],
+    },
+    measurement: {
+      type: Number,
+      required: [true, "Measurement is required"],
     },
   },
   { timestamps: true }
 );
 
-const Ingredients: Model<IModelDocument> = mongoose.model<IModelDocument>(
-  "Ingredients",
-  recipeIngredientSchema
-);
+const Ingredients = mongoose.model("Ingredients", recipeIngredientSchema);
 
 module.exports = Ingredients;

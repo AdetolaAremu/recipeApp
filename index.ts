@@ -22,6 +22,7 @@ const limit = rateLimit({
 
 app.use("/api", limit);
 app.use(express.json({ limit: "10kb" }));
+// app.use(express.urlencoded({ extended: true }));
 app.use(mongoSanitize()); // guard against sql injection
 app.use(xss()); // guard against xss attacks
 
