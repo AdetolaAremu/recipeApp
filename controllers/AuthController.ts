@@ -3,6 +3,7 @@ import { successResponseHandler } from "../utils/responseHandler";
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/userModel.ts");
+const { promisify } = require("util");
 
 const jwtSignedToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -87,5 +88,33 @@ exports.loginUser = catchAsync(
         new AppError("Email and Password fields cannot be empty", 422)
       );
     }
+  }
+);
+
+exports.privateRoute = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let token;
+
+    if (req.headers.authorization) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return next(new AppError("You are not authorized", 403));
+    }
+
+    const decodedToken = await promisify(jwt.verify)(
+      token,
+      process?.env?.JWT_SECRET
+    );
+
+    const currentUser = await User.findById(decodedToken.id);
+
+    if (!currentUser) {
+      return next(new AppError("Token does not belong to any user", 403));
+    }
+
+    req.user = currentUser;
+    next();
   }
 );

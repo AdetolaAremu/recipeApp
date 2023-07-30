@@ -13,7 +13,7 @@ export interface IUserDocument extends Document {
   middleName: String;
   email: String;
   username: String;
-  isEmailVerified: String;
+  // isEmailVerified: String;
 }
 
 const userSchema = new mongoose.Schema<IUserDocument>(
@@ -40,10 +40,10 @@ const userSchema = new mongoose.Schema<IUserDocument>(
       unique: true,
       required: [true, "Username is required"],
     },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
-    },
+    // isEmailVerified: {
+    //   type: Boolean,
+    //   default: false,
+    // },
     password: {
       type: String,
       required: [true, "Password is required"],
