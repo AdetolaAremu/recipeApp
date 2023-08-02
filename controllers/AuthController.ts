@@ -25,7 +25,7 @@ exports.registerUser = catchAsync(async (req: Request) => {
     otp: getToken,
   });
 
-  successResponseHandler(200, "Account registration successfull", regUser);
+  successResponseHandler(201, "Account registration successfull", regUser);
 });
 
 exports.loginUser = catchAsync(
