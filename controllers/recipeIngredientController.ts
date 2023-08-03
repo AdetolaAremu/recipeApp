@@ -3,9 +3,10 @@ import { successResponseHandler } from "../utils/responseHandler";
 import { filterObj } from "../utils/shared";
 const catchAsync = require("../utils/catchAsync");
 const Ingredients = require("../models/recipeIngredient");
+const recipe = require("../models/recipe");
 const APIFeatures = require("../utils/apiFeatures");
 
-exports.getIngredients = catchAsync(async (req: Request) => {
+export const createIngredient = catchAsync(async (req: Request) => {
   const ingredient = await Ingredients.create({
     name: req.body.name,
     amount: req.body.amount,
@@ -21,7 +22,7 @@ exports.getIngredients = catchAsync(async (req: Request) => {
   );
 });
 
-exports.getIngredients = catchAsync(async (req: Request) => {
+export const getIngredients = catchAsync(async (req: Request) => {
   const Features = new APIFeatures(Ingredients.find(), req.query)
     .sort()
     .paginate()
@@ -38,7 +39,7 @@ exports.getIngredients = catchAsync(async (req: Request) => {
   );
 });
 
-exports.getOneIngredient = catchAsync(
+export const getOneIngredient = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const ingredients = await Ingredients.findbyId(req.params.id);
 
@@ -54,19 +55,7 @@ exports.getOneIngredient = catchAsync(
   }
 );
 
-exports.createIngredient = catchAsync(async (req: Request) => {
-  const ingredient = await Ingredients.create({
-    name: req.body.name,
-    amount: req.body.amount,
-    unit: req.body.unit,
-    quantity: req.body.quantity,
-    measurement: req.body.measurement,
-  });
-
-  successResponseHandler(201, "Ingredient created successfully", ingredient);
-});
-
-exports.updateIngredient = catchAsync(
+export const updateIngredient = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const ingredient = await Ingredients.findbyId(req.params.id);
 
@@ -97,5 +86,18 @@ exports.updateIngredient = catchAsync(
       "Ingredient updated successfully",
       updatedIngredient
     );
+  }
+);
+
+export const deleteIngredient = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const ingredientID = req.params.id;
+    const deletedBlogPost = await Ingredients.findByIdAndDelete(ingredientID);
+
+    if (!deletedBlogPost) {
+      return next(new AppError("Ingredient not found", 404));
+    }
+
+    successResponseHandler(200, "Recipe deleted successfully");
   }
 );

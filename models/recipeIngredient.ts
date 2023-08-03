@@ -25,6 +25,10 @@ const recipeIngredientSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Measurement is required"],
     },
+    recipeID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "BlogCategory",
+    },
   },
   { timestamps: true }
 );
