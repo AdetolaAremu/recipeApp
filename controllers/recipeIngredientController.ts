@@ -1,24 +1,33 @@
-import express, { NextFunction, Request } from "express";
+import { NextFunction, Request } from "express";
 import { successResponseHandler } from "../utils/responseHandler";
 import { filterObj } from "../utils/shared";
+import { IRecipeIngredient } from "../models/Interfaces/ingredients.interface";
 const catchAsync = require("../utils/catchAsync");
 const Ingredients = require("../models/recipeIngredient");
-const recipe = require("../models/recipe");
 const APIFeatures = require("../utils/apiFeatures");
 
 export const createIngredient = catchAsync(async (req: Request) => {
-  const ingredient = await Ingredients.create({
-    name: req.body.name,
-    amount: req.body.amount,
-    unit: req.body.unit,
-    quantity: req.body.quantity,
-    measurement: req.body.measurement,
-  });
+  const ingredientsData = req.body.ingredients;
+
+  const createdIngredients: IRecipeIngredient[] = [];
+
+  for (const ingredientData of ingredientsData) {
+    const ingredient = await Ingredients.create({
+      name: ingredientData.name,
+      amount: ingredientData.amount,
+      unit: ingredientData.unit,
+      quantity: ingredientData.quantity,
+      measurement: ingredientData.measurement,
+      recipeID: ingredientData.recipeID,
+    });
+
+    createdIngredients.push(ingredient);
+  }
 
   successResponseHandler(
-    200,
+    201,
     "Recipe ingredients created successfully",
-    ingredient
+    createdIngredients
   );
 });
 
@@ -55,36 +64,46 @@ export const getOneIngredient = catchAsync(
   }
 );
 
-export const updateIngredient = catchAsync(
+export const updateIngredients = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const ingredient = await Ingredients.findbyId(req.params.id);
+    const ingredientsData = req.body.ingredients;
 
-    if (!ingredient) {
-      return next(new AppError("Ingredient not found", 404));
-    }
+    const updatedIngredients: IRecipeIngredient[] = [];
 
-    const filteredObjs = filterObj(
-      req.body,
-      "name",
-      "amount",
-      "unit",
-      "quantity",
-      "measurement"
-    );
+    for (const ingredientData of ingredientsData) {
+      const ingredient = await Ingredients.findById(ingredientData.id);
 
-    const updatedIngredient = await Ingredients.findByIdAndUpdate(
-      req.params.id,
-      filteredObjs,
-      {
-        new: true,
-        runValidators: true,
+      if (!ingredient) {
+        return next(
+          new AppError(`Ingredient with ID ${ingredientData.id} not found`, 404)
+        );
       }
-    );
+
+      const filteredObjs = filterObj(
+        ingredientData,
+        "name",
+        "amount",
+        "unit",
+        "quantity",
+        "measurement"
+      );
+
+      const updatedIngredient = await Ingredients.findByIdAndUpdate(
+        ingredientData.id,
+        filteredObjs,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      updatedIngredients.push(updatedIngredient);
+    }
 
     return successResponseHandler(
       200,
-      "Ingredient updated successfully",
-      updatedIngredient
+      "Ingredients updated successfully",
+      updatedIngredients
     );
   }
 );
@@ -98,6 +117,6 @@ export const deleteIngredient = catchAsync(
       return next(new AppError("Ingredient not found", 404));
     }
 
-    successResponseHandler(200, "Recipe deleted successfully");
+    successResponseHandler(200, "Ingredient deleted successfully");
   }
 );

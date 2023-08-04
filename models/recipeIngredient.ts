@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
+import { IRecipeIngredient } from "./Interfaces/ingredients.interface";
 
-const recipeIngredientSchema = new mongoose.Schema(
+const recipeIngredientSchema = new mongoose.Schema<IRecipeIngredient>(
   {
     name: {
       type: String,
@@ -27,12 +28,15 @@ const recipeIngredientSchema = new mongoose.Schema(
     },
     recipeID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "BlogCategory",
+      ref: "recipe",
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-const Ingredients = mongoose.model("Ingredients", recipeIngredientSchema);
+const Ingredients: Model<IRecipeIngredient> = mongoose.model(
+  "Ingredients",
+  recipeIngredientSchema
+);
 
 module.exports = Ingredients;

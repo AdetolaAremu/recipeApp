@@ -9,6 +9,6 @@ router.post("/ingredients", ingredientController.createIngredient);
 
 router.get("ingredients/:id", ingredientController.getOneIngredient);
 
-router.patch("/ingredients/:id", ingredientController.updateIngredient);
+router.patch("/ingredients/:id", ingredientController.updateIngredients);
 
 router.delete("/ingredients/:id", ingredientController.deleteIngredient);
