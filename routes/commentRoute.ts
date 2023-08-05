@@ -10,3 +10,5 @@ router
   .route("/:id")
   .patch(authController.privateRoute, commentController.updateComment)
   .delete(authController.privateRoute, commentController.deleteComment);
+
+module.exports = router;
