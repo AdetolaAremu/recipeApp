@@ -11,7 +11,7 @@ const jwtSignedToken = (id: string) => {
   });
 };
 
-exports.registerUser = catchAsync(async (req: Request) => {
+export const registerUser = catchAsync(async (req: Request) => {
   const getToken = (Math.random() + 1).toString(10).substring(2);
 
   const regUser = await User.create({
@@ -28,7 +28,7 @@ exports.registerUser = catchAsync(async (req: Request) => {
   successResponseHandler(201, "Account registration successfull", regUser);
 });
 
-exports.loginUser = catchAsync(
+export const loginUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     if (req.body.email && req.body.password) {
       const { email, password } = req.body;
@@ -91,7 +91,7 @@ exports.loginUser = catchAsync(
   }
 );
 
-exports.privateRoute = catchAsync(
+export const privateRoute = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let token;
 

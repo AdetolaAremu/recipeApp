@@ -3,9 +3,9 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
-import hpp from "hpp";
-
-// routes should be called here
+const authRouter = require("./routes/authRoutes");
+const commentRouter = require("./routes/commentRoute");
+const recipeRouter = require("./routes/recipeRoute");
 
 const app: Application = express();
 
@@ -22,7 +22,6 @@ const limit = rateLimit({
 
 app.use("/api", limit);
 app.use(express.json({ limit: "10kb" }));
-// app.use(express.urlencoded({ extended: true }));
 app.use(mongoSanitize()); // guard against sql injection
 app.use(xss()); // guard against xss attacks
 
@@ -34,6 +33,9 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // routers should be here
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/recipes", recipeRouter);
+app.use("/api/v1/comments", commentRouter);
 
 app.use("*", (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));

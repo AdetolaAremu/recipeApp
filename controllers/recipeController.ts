@@ -5,7 +5,7 @@ const Recipe = require("../models/recipe");
 const Ingredients = require("../models/recipeIngredient");
 const APIFeatures = require("../utils/apiFeatures");
 
-export const createRecipe = catchAsync(async (req: Request) => {
+export const createRecipe: void = catchAsync(async (req: Request) => {
   const { title, description, suggestion, user } = req.body;
   const ingredientsData = req.body.ingredients;
 
@@ -39,14 +39,14 @@ export const createRecipe = catchAsync(async (req: Request) => {
   successResponseHandler(201, "Recipe created successfully", recipe);
 });
 
-export const getAllRecipes = catchAsync(async (req: Request) => {
+export const getAllRecipe: void = catchAsync(async (req: Request) => {
   const Features = new APIFeatures(Recipe.find(), req.query)
     .sort()
     .paginate()
     .filter()
     .fields();
 
-  const recipes = await Features.query;
+  const recipes: string[] = await Features.query;
 
   successResponseHandler(
     200,
@@ -56,9 +56,9 @@ export const getAllRecipes = catchAsync(async (req: Request) => {
   );
 });
 
-export const getOneRecipe = catchAsync(
+export const getOneRecipe: void = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const recipe = await Recipe.findbyId(req.params.id)
+    const recipe: Object = await Recipe.findbyId(req.params.id)
       .populate("theIngredients")
       .populate("theComments");
 
@@ -70,7 +70,7 @@ export const getOneRecipe = catchAsync(
   }
 );
 
-export const updateRecipe = catchAsync(
+export const updateRecipe: void = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { title, description, suggestion, ingredients } = req.body;
     const { id } = req.params;
@@ -115,7 +115,7 @@ export const updateRecipe = catchAsync(
   }
 );
 
-export const deleteRecipe = catchAsync(
+export const deleteRecipe: void = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
 
